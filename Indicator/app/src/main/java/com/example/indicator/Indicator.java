@@ -28,7 +28,7 @@ public class Indicator extends LinearLayout {
             if (positionOffset == 0) {
                 return;
             }
-            if (currentPosition == position) {
+            if (currentPosition == position) {//判断手势方向
                 forward(position, positionOffset);
             } else {
                 backup(position, positionOffset);
@@ -132,6 +132,7 @@ public class Indicator extends LinearLayout {
         return (int) (this.getResources().getDisplayMetrics().density * dip + 0.5f);
     }
 
+    //循环的关键
     private ImageView getImageView(int position) {
         if (position >= imageViews.size()) {
             return imageViews.get(0);

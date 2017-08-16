@@ -34,6 +34,9 @@ public class LoopOnPageChangeListener implements ViewPager.OnPageChangeListener 
 
     @Override
     public void onPageScrollStateChanged(int state) {
+        // 不在onPageSelected 里处理
+        // 是因为onPageSelected回调时界面可能还没有停止滑动
+        // 因此会产生闪烁
         if (state == ViewPager.SCROLL_STATE_IDLE && targetPosition != currentPosition) {
             int index = targetPosition;
             if (targetPosition == size - 1) {

@@ -27,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new LoopAdapter(imageViews));
         indicator = (Indicator) findViewById(R.id.indicator);
-        indicator.setSize(imageViews.size() - 2);
-        viewPager.setCurrentItem(1);
+        indicator.setSize(imageViews.size() - 2);//头尾增加为了循环  但实际数量不要加
+        viewPager.setCurrentItem(1);//设置当前位置
         viewPager.addOnPageChangeListener(indicator.getOnPageChangeListener());
         viewPager.addOnPageChangeListener(new LoopOnPageChangeListener(viewPager, imageViews.size()));
     }
