@@ -56,7 +56,7 @@ public class MyViewGroup extends ViewGroup {
             @Override
             public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                 Log.i(tag, "onScroll -> distanceY" + distanceY);
-                if (distanceY < 0) {
+                if (distanceY < 0) {// 手势向下滑动是负值
                     animatorLayoutOffset(1);
                 }
 
