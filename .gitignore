@@ -16,3 +16,4 @@ GestureDetector/gradle/wrapper/gradle-wrapper.properties
 GestureDetector/gradlew
 GestureDetector/gradlew.bat
 .DS_Store
+GestureDetector/.idea/vcs.xml
