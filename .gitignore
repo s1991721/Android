@@ -17,3 +17,17 @@ GestureDetector/gradlew
 GestureDetector/gradlew.bat
 .DS_Store
 GestureDetector/.idea/vcs.xml
+ScrollScale/.idea/compiler.xml
+ScrollScale/.idea/copyright/profiles_settings.xml
+ScrollScale/.idea/misc.xml
+ScrollScale/.idea/modules.xml
+ScrollScale/.idea/runConfigurations.xml
+ScrollScale/.idea/vcs.xml
+ScrollScale/app/proguard-rules.pro
+ScrollScale/app/src/androidTest/java/com/ljf/scrollscale/ExampleInstrumentedTest.java
+ScrollScale/app/src/test/java/com/ljf/scrollscale/ExampleUnitTest.java
+ScrollScale/gradle.properties
+ScrollScale/gradle/wrapper/gradle-wrapper.jar
+ScrollScale/gradle/wrapper/gradle-wrapper.properties
+ScrollScale/gradlew
+ScrollScale/gradlew.bat
