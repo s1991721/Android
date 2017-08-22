@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">ScrollScale</string>
+    <string name="action_settings">Settings</string>
+
+    <string-array name="tab">
+        <item>tab1</item>
+        <item>tab2</item>
+    </string-array>
+
+</resources>
