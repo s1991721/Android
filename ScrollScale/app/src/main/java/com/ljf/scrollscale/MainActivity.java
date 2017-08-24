@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.i("ljf-scrollY", "onScroll: " + y);
                 if (y > imageView.getHeight()) {
                     tabView.setY(y);
-                } else {
+                } else {// 否则 快速滑动 TabView和ImageView会有空隙
                     tabView.setY(imageView.getHeight());
                 }
             }

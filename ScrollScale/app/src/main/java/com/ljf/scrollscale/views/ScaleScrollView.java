@@ -53,13 +53,19 @@ public class ScaleScrollView extends ScrollView {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch (event.getAction()) {
+//            case MotionEvent.ACTION_DOWN:
+//                lastY = event.getRawY();
+//                break;
+
             case MotionEvent.ACTION_MOVE:
-                if (lastY == 0) {//为了防止首次单击  然后下拉产生多余距离 见注释54-56行
+                if (lastY == 0) {//为了防止首次单击  然后下拉产生多余距离 见注释56-58行
                     lastY = event.getRawY();
                     break;
                 }
                 nowY = event.getRawY();
-                if (getScrollY() == 0 && (nowY - lastY > 0) && !animatorRunning()) {
+                if (getScrollY() == 0 //只有在最顶部的时候下拉有效
+                        && (nowY - lastY > 0) //手势要向下
+                        && !animatorRunning()) { //动画停止才有效
                     ViewGroup.LayoutParams layoutParams = firstView.getLayoutParams();
                     //防止match_parent = -1 wrap_content=-2
                     if (layoutParams.width < 0 || layoutParams.height < 0) {
@@ -91,6 +97,7 @@ public class ScaleScrollView extends ScrollView {
 
     private AnimatorSet animatorSet;
 
+    //恢复原形
     private void recovery() {
         ViewGroup.LayoutParams layoutParams = firstView.getLayoutParams();
 
@@ -150,6 +157,7 @@ public class ScaleScrollView extends ScrollView {
         this.onScrollListener = onScrollListener;
     }
 
+    //滑动距离回调
     public interface OnScrollListener {
         void onScroll(int y);
     }
