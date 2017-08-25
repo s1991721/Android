@@ -17,3 +17,11 @@
 <div align=center><img width="320" height="568" src="https://github.com/s1991721/Android/blob/master/ScrollScale/preview.gif"/></div>
 
 文章地址：http://blog.csdn.net/s1991721/article/details/77541859
+
+## Google开源的EXOPlayer应用项目
+
+<div align=center><img width="320" height="568" src="https://github.com/s1991721/Android/blob/master/
+EXOPlayer/preview1.gif"/><img width="320" height="568" src="https://github.com/s1991721/Android/blob/master/
+EXOPlayer/preview2.gif"/></div>
+
+文章地址：
