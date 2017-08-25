@@ -41,9 +41,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void goActivity(String url) {
         Intent intent = new Intent(MainActivity.this, PlayerActivity.class);
-        intent.setData(Uri.parse(url));
+        intent.setData(Uri.parse(url)); //传入视频地址  在PlayerActivity内会根据后缀的不同区分不同的资源
         intent.setAction(PlayerActivity.ACTION_VIEW);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) { //ShareElement 效果
             startActivity(intent, ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, imageView, "shareImage").toBundle());
         } else {
             startActivity(intent);

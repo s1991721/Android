@@ -201,6 +201,7 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
     private void initializePlayer() {
         Intent intent = getIntent();
         if (player == null) {
+            //数字证书相关  如果需求不需要的话可以移除
             boolean preferExtensionDecoders = intent.getBooleanExtra(PREFER_EXTENSION_DECODERS, false);
             UUID drmSchemeUuid = intent.hasExtra(DRM_SCHEME_UUID_EXTRA)
                     ? UUID.fromString(intent.getStringExtra(DRM_SCHEME_UUID_EXTRA)) : null;
@@ -229,8 +230,9 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
                     return;
                 }
             }
+            //数字证书相关
 
-            eventLogger = new EventLogger();
+            eventLogger = new EventLogger();//日志打印
             TrackSelection.Factory videoTrackSelectionFactory =
                     new AdaptiveVideoTrackSelection.Factory(BANDWIDTH_METER);
             trackSelector = new DefaultTrackSelector(mainHandler, videoTrackSelectionFactory);
@@ -258,7 +260,7 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
             String action = intent.getAction();
             Uri[] uris;
             String[] extensions;
-            if (ACTION_VIEW.equals(action)) {
+            if (ACTION_VIEW.equals(action)) {// 多个资源的话会无缝连接播放
                 uris = new Uri[]{intent.getData()};
                 extensions = new String[]{intent.getStringExtra(EXTENSION_EXTRA)};
             } else if (ACTION_VIEW_LIST.equals(action)) {
@@ -275,11 +277,11 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
                 showToast(getString(R.string.unexpected_intent_action, action));
                 return;
             }
-            if (Util.maybeRequestReadExternalStoragePermission(this, uris)) {
+            if (Util.maybeRequestReadExternalStoragePermission(this, uris)) {// 外部存储权限
                 // The player will be reinitialized if the permission is granted.
                 return;
             }
-            MediaSource[] mediaSources = new MediaSource[uris.length];
+            MediaSource[] mediaSources = new MediaSource[uris.length];  //将URL组装成资源类
             for (int i = 0; i < uris.length; i++) {
                 mediaSources[i] = buildMediaSource(uris[i], extensions[i]);
             }
@@ -290,6 +292,7 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
         }
     }
 
+    //根据后缀区分资源类型
     private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
         int type = Util.inferContentType(!TextUtils.isEmpty(overrideExtension) ? "." + overrideExtension
                 : uri.getLastPathSegment());
@@ -333,7 +336,7 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
                 Timeline.Window window = timeline.getWindow(playerWindow, new Timeline.Window());
                 if (!window.isDynamic) {
                     shouldRestorePosition = true;
-                    playerPosition = window.isSeekable ? player.getCurrentPosition() : C.TIME_UNSET;
+                    playerPosition = window.isSeekable ? player.getCurrentPosition() : C.TIME_UNSET; //保存播放位置
                 }
             }
             player.release();
@@ -450,7 +453,7 @@ public class PlayerActivity extends Activity implements ExoPlayer.EventListener,
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (event.getKeyCode() == KeyEvent.KEYCODE_BACK) {
-            simpleExoPlayerView.removeAllViews();
+            simpleExoPlayerView.removeAllViews();//为了 ShareElement效果
             imageView.setVisibility(View.VISIBLE);
         }
         return super.onKeyDown(keyCode, event);
