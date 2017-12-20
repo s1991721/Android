@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    
+    <declare-styleable name="VideoViewIjk">
+        <attr name="mediacodec" format="integer"/>
+        <attr name="mediacodec_auto_rotate" format="integer"/>
+        <attr name="mediacodec_handle_resolution_change" format="integer"/>
+        <attr name="opensles" format="integer"/>
+        <attr name="overlay_format" format="string"/>
+        <attr name="framedrop" format="integer"/>
+        <attr name="start_on_prepared" format="integer"/>
+        <attr name="http_detect_range_support" format="integer"/>
+        <attr name="skip_loop_filter" format="integer"/>
+    </declare-styleable>
+
+</resources>
