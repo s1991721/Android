@@ -24,6 +24,6 @@
 
 文章地址：http://blog.csdn.net/s1991721/article/details/77587308
 
-## B站开源的IjkPlayer自封空间
+## B站开源的IjkPlayer自封控件
 
 文章地址：http://blog.csdn.net/s1991721/article/details/78880316
