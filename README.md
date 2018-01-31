@@ -31,6 +31,7 @@
 ## 与ViewPager完美结合的顺滑引导条系列
 
 <div align=center><img width="320" height="232" src="http://upload-images.jianshu.io/upload_images/9261086-d0fc7c05af66928c.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
-<div align=center><img width="320" height="569" src="http://upload-images.jianshu.io/upload_images/9261086-f81e92e2ea01b11f.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240"/></div>
+![]("http://upload-images.jianshu.io/upload_images/9261086-f81e92e2ea01b11f.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240")
+![Image text](https://raw.github.com/yourName/repositpry/master/yourprojectName/img-folder/test.jpg)
 
 文章地址：http://blog.csdn.net/s1991721/article/details/79211869
