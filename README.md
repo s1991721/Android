@@ -30,7 +30,7 @@
 
 ## 与ViewPager完美结合的顺滑引导条系列
 
-![效果图](http://upload-images.jianshu.io/upload_images/9261086-d0fc7c05af66928c.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![效果图](https://github.com/s1991721/Android/blob/master/GuideRecyclerView/preview.gif)
 
 ![最终效果](http://upload-images.jianshu.io/upload_images/9261086-f81e92e2ea01b11f.gif?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
