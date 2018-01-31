@@ -201,7 +201,7 @@ public class GuideSlideView2 extends HorizontalScrollView {
         params.leftMargin = minMarginLeft + marginLeft;
         lineView.setLayoutParams(params);
 
-        setScrollX(originalX - screenWidth / 2 + offset);
+        setScrollX(marginLeft - screenWidth / 2);
     }
 
     public void setOnGuideSlideItemClickListener(OnGuideSlideItemClickListener onGuideSlideItemClickListener) {
