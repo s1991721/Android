@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper
  */
 class OpenHelper(context: Context?, var name: String?, factory: SQLiteDatabase.CursorFactory?, version: Int) : SQLiteOpenHelper(context, name, factory, version) {
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL("create table if not exists Animal (id integer primary key,name text,age integer)")
+        db?.execSQL("create table Animal (id integer primary key,name text,age integer)")
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
