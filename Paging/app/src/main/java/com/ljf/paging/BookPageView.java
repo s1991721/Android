@@ -11,12 +11,11 @@ import android.graphics.Path;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Region;
+import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 import android.widget.Scroller;
 import android.widget.Toast;
 
@@ -265,8 +264,46 @@ public class BookPageView extends View {
         canvas.clipPath(getPathAreaC(), Region.Op.UNION);
         canvas.clipPath(getPathAreaB(), Region.Op.REVERSE_DIFFERENCE);
         canvas.drawBitmap(contentBitmap, 0, 0, null);
+        drawPathBShadow(canvas);
         canvas.restore();
 
+    }
+
+    //绘制投在B区域的阴影
+    private void drawPathBShadow(Canvas canvas) {
+        int deepColor = 0xff111111;
+        int lightColor = 0x00111111;
+        int[] gradientColors = new int[]{deepColor, lightColor};
+
+        int deepOffset = 0;
+        int lightOffset = 0;
+
+        float aTof = (float) Math.hypot((a.x - f.x), (a.y - f.y));
+        float viewDiagonalLength = (float) Math.hypot(width, height);
+
+        int left;
+        int right;
+        int top = (int) c.y;
+        int bottom = (int) (viewDiagonalLength + top);
+
+        GradientDrawable gradientDrawable;
+
+        if (from == FROM_TOP) {
+            gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+            gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+            left = (int) (c.x - deepOffset);
+            right = (int) (c.x + aTof / 4 + lightOffset);
+        } else {
+            gradientDrawable = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
+            gradientDrawable.setGradientType(GradientDrawable.LINEAR_GRADIENT);
+            left = (int) (c.x - aTof / 4 - lightOffset);
+            right = (int) (c.x + deepOffset);
+        }
+        gradientDrawable.setBounds(left, top, right, bottom);
+
+        float rotateDegrees = (float) Math.toDegrees(Math.atan2(e.x - f.x, h.y - f.y));
+        canvas.rotate(rotateDegrees, c.x, c.y);
+        gradientDrawable.draw(canvas);
     }
 
     //绘制C区内容
