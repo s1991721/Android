@@ -26,12 +26,10 @@ public class BookPageView extends View {
 
     private MyPoint a, f, g, e, h, c, j, b, k, d, i;//各点坐标
 
-    private Paint paintPoint;//画点笔
     private Paint paintAreaA;//区域A画笔
     private Paint paintAreaC;//区域C画笔
     private Paint paintAreaB;//区域B画笔
     private Paint paintText;//文字画笔
-    private Paint paintContentC;//C区域内容画笔
 
     private Path pathA;//区域A路径
     private Path pathC;//区域C路径
@@ -99,10 +97,6 @@ public class BookPageView extends View {
 
     //初始化画笔
     private void initPaint() {
-        paintPoint = new Paint();
-        paintPoint.setColor(Color.RED);
-        paintPoint.setTextSize(25);
-
         paintAreaA = new Paint();
         paintAreaA.setColor(Color.GREEN);
         paintAreaA.setAntiAlias(true);
@@ -121,11 +115,6 @@ public class BookPageView extends View {
         paintText.setTextAlign(Paint.Align.CENTER);
         paintText.setSubpixelText(true);
         paintText.setTextSize(30);
-
-        paintContentC = new Paint();
-        paintContentC.setColor(Color.YELLOW);
-        paintContentC.setAntiAlias(true);
-
     }
 
     //初始化路径
@@ -693,19 +682,6 @@ public class BookPageView extends View {
                 / ((y1 - y2) * (x3 - x4) - (x1 - x2) * (y3 - y4));
 
         return new MyPoint(pointX, pointY);
-    }
-
-    //计算C点X坐标，防止左边线超出屏幕
-    private float calculateCPoint(MyPoint a, MyPoint f) {
-        MyPoint g, e;
-        g = new MyPoint();
-        e = new MyPoint();
-        g.x = (a.x + f.x) / 2;
-        g.y = (a.y + f.y) / 2;
-
-        e.x = g.x - (f.y - g.y) * (f.y - g.y) / (f.x - g.x);
-        e.y = f.y;
-        return e.x - (f.x - e.x) / 2;
     }
 
     //计算A点X坐标，防止左边线超出屏幕
