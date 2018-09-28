@@ -677,7 +677,7 @@ public class BookPageView extends View {
                 f.y = 0;
                 calculatePoint();
                 if (c.x < 0) {
-                    calculateAPoint();
+                    calculateAPointRight();
                 }
                 break;
             case FROM_RIGHT_BOTTOM:
@@ -685,7 +685,7 @@ public class BookPageView extends View {
                 f.y = height;
                 calculatePoint();
                 if (c.x < 0) {
-                    calculateAPoint();
+                    calculateAPointRight();
                 }
                 break;
             case FROM_RIGHT:
@@ -697,16 +697,16 @@ public class BookPageView extends View {
                 f.x = 0;
                 f.y = 0;
                 calculatePoint();
-                if (c.x < 0) {
-                    calculateAPoint();
+                if (c.x > width) {
+                    calculateAPointLeft();
                 }
                 break;
             case FROM_LEFT_BOTTOM:
                 f.x = 0;
                 f.y = height;
                 calculatePoint();
-                if (c.x < 0) {
-                    calculateAPoint();
+                if (c.x > width) {
+                    calculateAPointLeft();
                 }
                 break;
             case FROM_LEFT:
@@ -785,12 +785,25 @@ public class BookPageView extends View {
         return new MyPoint(pointX, pointY);
     }
 
+    //根据相似三角形，计算固定C点，从而算出A点坐标
     //计算A点X坐标，防止左边线超出屏幕
-    private void calculateAPoint() {
+    private void calculateAPointRight() {
         float w0 = width - c.x;
         float w1 = Math.abs(f.x - a.x);
         float w2 = width * w1 / w0;
         a.x = Math.abs(f.x - w2);
+
+        float h1 = Math.abs(f.y - a.y);
+        float h2 = w2 * h1 / w1;
+        a.y = Math.abs(f.y - h2);
+    }
+
+    //计算A点X坐标，防止右边线超出屏幕
+    private void calculateAPointLeft() {
+        float w0 = c.x;
+        float w1 = a.x;
+        float w2 = width * w1 / w0;
+        a.x = w2;
 
         float h1 = Math.abs(f.y - a.y);
         float h2 = w2 * h1 / w1;
