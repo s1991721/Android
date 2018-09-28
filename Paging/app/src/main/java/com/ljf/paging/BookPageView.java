@@ -45,11 +45,13 @@ public class BookPageView extends View {
     float lPathAShadowDis = 0;//A区域左阴影矩形短边长度参考值
     float rPathAShadowDis = 0;//A区域右阴影矩形短边长度参考值
 
-    //翻页其实位置
-    private static final int FROM_TOP = 0;
-    private static final int FROM_BOTTOM = 1;
-    private static final int FROM_LEFT = 2;
-    private static final int FROM_RIGHT = 3;
+    //翻页起始位置
+    private static final int FROM_RIGHT_TOP = 0;
+    private static final int FROM_RIGHT_BOTTOM = 1;
+    private static final int FROM_RIGHT = 2;
+    private static final int FROM_LEFT_TOP = 3;
+    private static final int FROM_LEFT_BOTTOM = 4;
+    private static final int FROM_LEFT = 5;
 
     //滑动用
     private Scroller mScroller;
@@ -197,7 +199,7 @@ public class BookPageView extends View {
         if (a.x == -1 && a.y == -1) {//未翻页状态
             drawPathAContent(canvas, getPathAreaA());
         } else {
-            if (from == FROM_TOP) {//顶部翻页
+            if (from == FROM_RIGHT_TOP) {//顶部翻页
                 drawPathAContent(canvas, getPathAreaATop());
                 drawPathCContent(canvas, getPathAreaATop());
                 drawPathBContent(canvas, getPathAreaATop());
@@ -237,7 +239,7 @@ public class BookPageView extends View {
         int bottom = (int) (e.y + height);
 
         GradientDrawable gradientDrawable;
-        if (from == FROM_TOP) {
+        if (from == FROM_RIGHT_TOP) {
             gradientDrawable = gradientDrawableATopLeft;
 
             left = (int) (e.x - lPathAShadowDis / 2);
@@ -278,7 +280,7 @@ public class BookPageView extends View {
         int bottom;
 
         GradientDrawable gradientDrawable;
-        if (from == FROM_TOP) {
+        if (from == FROM_RIGHT_TOP) {
             gradientDrawable = gradientDrawableATopRight;
 
             top = (int) (h.y - rPathAShadowDis / 2);
@@ -353,7 +355,7 @@ public class BookPageView extends View {
 
         GradientDrawable gradientDrawable;
 
-        if (from == FROM_TOP) {
+        if (from == FROM_RIGHT_TOP) {
             gradientDrawable = gradientDrawableBTop;
 
             left = (int) (c.x - deepOffset);
@@ -414,7 +416,7 @@ public class BookPageView extends View {
         int top = (int) c.y;
         int bottom = (int) (viewDiagonalLength + c.y);
         GradientDrawable gradientDrawable;
-        if (from == FROM_TOP) {
+        if (from == FROM_RIGHT_TOP) {
             gradientDrawable = gradientDrawableCTop;
 
             left = (int) (c.x - lightOffset);
@@ -575,9 +577,9 @@ public class BookPageView extends View {
                 if (x <= width / 3) {//左侧翻页
                     from = FROM_LEFT;
                 } else if (x > width / 3 && y <= height / 3) {//上侧翻页
-                    from = FROM_TOP;
+                    from = FROM_RIGHT_TOP;
                 } else if (x > width / 3 && y >= height * 2 / 3) {//下侧翻页
-                    from = FROM_BOTTOM;
+                    from = FROM_RIGHT_BOTTOM;
                 } else if (x >= width * 2 / 3 && y >= height / 3 && y <= height * 2 / 3) {//右侧翻页
                     from = FROM_RIGHT;
                 } else {
@@ -604,14 +606,14 @@ public class BookPageView extends View {
     private void setTouchPoint(float x, float y, int from) {
         a.x = x;
         a.y = y;
-        if (from == FROM_TOP) {
+        if (from == FROM_RIGHT_TOP) {
             f.x = width;
             f.y = 0;
             calculatePoint();
             if (c.x < 0) {
                 calculateAPoint();
             }
-        } else if (from == FROM_BOTTOM) {
+        } else if (from == FROM_RIGHT_BOTTOM) {
             f.x = width;
             f.y = height;
             calculatePoint();
@@ -708,7 +710,7 @@ public class BookPageView extends View {
     private void backToNormal() {
         int dx;
         int dy;
-        if (from == FROM_TOP) {
+        if (from == FROM_RIGHT_TOP) {
             dx = (int) (width - 1 - a.x);
             dy = (int) (1 - a.y);
         } else {
