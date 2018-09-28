@@ -10,6 +10,9 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
 import android.graphics.drawable.GradientDrawable;
+import android.text.Layout;
+import android.text.StaticLayout;
+import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
@@ -29,7 +32,7 @@ public class BookPageView extends View {
     private Paint paintAreaA;//区域A画笔
     private Paint paintAreaC;//区域C画笔
     private Paint paintAreaB;//区域B画笔
-    private Paint paintText;//文字画笔
+    private TextPaint paintText;//文字画笔
 
     private Path pathA;//区域A路径
     private Path pathC;//区域C路径
@@ -109,12 +112,10 @@ public class BookPageView extends View {
         paintAreaB.setColor(Color.BLUE);
         paintAreaB.setAntiAlias(true);
 
-        paintText = new Paint();
+        paintText = new TextPaint();
         paintText.setColor(Color.BLACK);
         paintText.setAntiAlias(true);
-        paintText.setTextAlign(Paint.Align.CENTER);
-        paintText.setSubpixelText(true);
-        paintText.setTextSize(30);
+        paintText.setTextSize(60);
     }
 
     //初始化路径
@@ -541,19 +542,25 @@ public class BookPageView extends View {
     private void initBitmapA(Bitmap bitmap, Paint paint) {
         Canvas canvas = new Canvas(bitmap);
         canvas.drawPath(getPathAreaA(), paint);
-        canvas.drawText("区域A", width - 260, height - 100, paintText);
+        StaticLayout staticLayout = new StaticLayout("abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789", paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+        canvas.translate(20, 20);
+        staticLayout.draw(canvas);
     }
 
     private void initBitmapB(Bitmap bitmap, Paint paint) {
         Canvas canvas = new Canvas(bitmap);
         canvas.drawPath(getPathAreaA(), paint);
-        canvas.drawText("区域B", width - 260, height - 100, paintText);
+        StaticLayout staticLayout = new StaticLayout("abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789", paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+        canvas.translate(20, 20);
+        staticLayout.draw(canvas);
     }
 
     private void initBitmapC(Bitmap bitmap, Paint paint) {
         Canvas canvas = new Canvas(bitmap);
         canvas.drawPath(getPathAreaA(), paint);
-        canvas.drawText("区域C", width - 260, height - 100, paintText);
+        StaticLayout staticLayout = new StaticLayout("abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789", paintText, width-40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+        canvas.translate(20, 20);
+        staticLayout.draw(canvas);
     }
 
     //记录翻页方向
