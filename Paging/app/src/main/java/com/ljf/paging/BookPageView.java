@@ -558,7 +558,7 @@ public class BookPageView extends View {
     private void initBitmapC(Bitmap bitmap, Paint paint) {
         Canvas canvas = new Canvas(bitmap);
         canvas.drawPath(getPathAreaA(), paint);
-        StaticLayout staticLayout = new StaticLayout("abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789", paintText, width-40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+        StaticLayout staticLayout = new StaticLayout("", paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
     }
@@ -592,6 +592,7 @@ public class BookPageView extends View {
                 setTouchPoint(event.getX(), event.getY(), from);
                 break;
             case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
                 backToNormal();
                 break;
         }
