@@ -18,7 +18,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.widget.Scroller;
-import android.widget.Toast;
 
 /**
  * Created by mr.lin on 2018/9/19.
@@ -46,6 +45,7 @@ public class BookPageView extends View {
     float rPathAShadowDis = 0;//A区域右阴影矩形短边长度参考值
 
     //翻页起始位置
+    private static final int FROM_NORMAL = -1;
     private static final int FROM_RIGHT_TOP = 0;
     private static final int FROM_RIGHT_BOTTOM = 1;
     private static final int FROM_RIGHT = 2;
@@ -69,6 +69,8 @@ public class BookPageView extends View {
         setClickable(true);
         init();
     }
+
+    //******************************初始化******************************
 
     //初始化变量
     private void init() {
@@ -190,23 +192,40 @@ public class BookPageView extends View {
         gradientDrawableCBottom.setGradientType(GradientDrawable.LINEAR_GRADIENT);
     }
 
+    //******************************绘制******************************
+
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
         canvas.drawColor(Color.YELLOW);
 
-        if (a.x == -1 && a.y == -1) {//未翻页状态
+        if (from == FROM_NORMAL) {//未翻页状态
             drawPathAContent(canvas, getPathAreaA());
         } else {
-            if (from == FROM_RIGHT_TOP) {//顶部翻页
-                drawPathAContent(canvas, getPathAreaATop());
-                drawPathCContent(canvas, getPathAreaATop());
-                drawPathBContent(canvas, getPathAreaATop());
-            } else {//底部翻页
-                drawPathAContent(canvas, getPathAreaABottom());
-                drawPathCContent(canvas, getPathAreaABottom());
-                drawPathBContent(canvas, getPathAreaABottom());
+            switch (from) {
+                case FROM_RIGHT_TOP:
+                    drawPathAContent(canvas, getPathAreaARightTop());
+                    drawPathCContent(canvas, getPathAreaARightTop());
+                    drawPathBContent(canvas, getPathAreaARightTop());
+                    break;
+                case FROM_RIGHT_BOTTOM:
+                case FROM_RIGHT:
+                    drawPathAContent(canvas, getPathAreaARightBottom());
+                    drawPathCContent(canvas, getPathAreaARightBottom());
+                    drawPathBContent(canvas, getPathAreaARightBottom());
+                    break;
+                case FROM_LEFT_TOP:
+                    drawPathAContent(canvas, getPathAreaALeftTop());
+                    drawPathCContent(canvas, getPathAreaALeftTop());
+                    drawPathBContent(canvas, getPathAreaALeftTop());
+                    break;
+                case FROM_LEFT_BOTTOM:
+                case FROM_LEFT:
+                    drawPathAContent(canvas, getPathAreaALeftBottom());
+                    drawPathCContent(canvas, getPathAreaALeftBottom());
+                    drawPathBContent(canvas, getPathAreaALeftBottom());
+                    break;
             }
         }
 
@@ -217,10 +236,10 @@ public class BookPageView extends View {
         canvas.save();
         canvas.clipPath(path, Region.Op.INTERSECT);
         canvas.drawBitmap(bitmapContentA, 0, 0, null);
-        if (from != -1) {
-            if (from == FROM_LEFT || from == FROM_RIGHT) {
+        if (from != FROM_NORMAL) {
+            if (from == FROM_RIGHT) {
                 drawPathAHorizontalShadow(canvas);
-            } else {
+            } else if (from == FROM_RIGHT_TOP || from == FROM_RIGHT_BOTTOM) {
                 drawPathALeftShadow(canvas);
                 drawPathARightShadoe(canvas);
             }
@@ -435,7 +454,7 @@ public class BookPageView extends View {
     }
 
     //区域A的路径 右上角翻页
-    private Path getPathAreaATop() {
+    private Path getPathAreaARightTop() {
         pathA.reset();
         pathA.lineTo(c.x, c.y);
         pathA.quadTo(e.x, e.y, b.x, b.y);
@@ -449,8 +468,8 @@ public class BookPageView extends View {
     }
 
     //区域A的路径 右下角翻页
-    private Path getPathAreaABottom() {
-        pathA.reset();//原点左上角
+    private Path getPathAreaARightBottom() {
+        pathA.reset();
         pathA.lineTo(0, height);//直线到左下角
         pathA.lineTo(c.x, c.y);//直线到c点
         pathA.quadTo(e.x, e.y, b.x, b.y);//贝塞尔曲线画弧，e为控点，b为终点
@@ -459,6 +478,36 @@ public class BookPageView extends View {
         pathA.quadTo(h.x, h.y, j.x, j.y);//直线到弧线
         pathA.lineTo(width, 0);//弧线到右上角
         pathA.close();//封闭路径
+        return pathA;
+    }
+
+    //区域A的路径 左上角翻页
+    private Path getPathAreaALeftTop() {
+        pathA.reset();
+        pathA.lineTo(c.x, c.y);
+        pathA.quadTo(e.x, e.y, b.x, b.y);
+        pathA.lineTo(a.x, a.y);
+        pathA.lineTo(k.x, k.y);
+        pathA.quadTo(h.x, h.y, j.x, j.y);
+        pathA.lineTo(0, height);
+        pathA.lineTo(width, height);
+        pathA.lineTo(width, 0);
+        pathA.close();
+        return pathA;
+    }
+
+    //区域A的路径 左下角翻页
+    private Path getPathAreaALeftBottom() {
+        pathA.reset();
+        pathA.lineTo(width, 0);
+        pathA.lineTo(width, height);
+        pathA.lineTo(c.x, c.y);
+        pathA.quadTo(e.x, e.y, b.x, b.y);
+        pathA.lineTo(a.x, a.y);
+        pathA.lineTo(k.x, k.y);
+        pathA.quadTo(h.x, h.y, j.x, j.y);
+        pathA.lineTo(0, 0);
+        pathA.close();
         return pathA;
     }
 
@@ -493,6 +542,8 @@ public class BookPageView extends View {
         pathB.close();
         return pathB;
     }
+
+    //******************************测量******************************
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
@@ -565,8 +616,10 @@ public class BookPageView extends View {
         staticLayout.draw(canvas);
     }
 
+    //******************************触点******************************
+
     //记录翻页方向
-    private int from = -1;
+    private int from = FROM_NORMAL;
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
@@ -574,28 +627,40 @@ public class BookPageView extends View {
             case MotionEvent.ACTION_DOWN:
                 float x = event.getX();
                 float y = event.getY();
-                if (x <= width / 3) {//左侧翻页
-                    from = FROM_LEFT;
-                } else if (x > width / 3 && y <= height / 3) {//上侧翻页
-                    from = FROM_RIGHT_TOP;
-                } else if (x > width / 3 && y >= height * 2 / 3) {//下侧翻页
-                    from = FROM_RIGHT_BOTTOM;
-                } else if (x >= width * 2 / 3 && y >= height / 3 && y <= height * 2 / 3) {//右侧翻页
-                    from = FROM_RIGHT;
-                } else {
-                    from = -1;
-                    Toast.makeText(getContext(), "center", Toast.LENGTH_LONG).show();
-                    return false;
+
+                if (x < width / 3) {//落点在左侧1/3
+                    if (y < height / 3) {//左上角
+                        from = FROM_LEFT_TOP;
+                    } else if (y > height * 2 / 3) {//左下角
+                        from = FROM_LEFT_BOTTOM;
+                    } else {//左中心
+                        from = FROM_LEFT;
+                    }
+
+                } else if (x > width * 2 / 3) {//落点在右侧1/3
+                    if (y < height / 3) {//右上角
+                        from = FROM_RIGHT_TOP;
+                    } else if (y > height * 2 / 3) {//右下角
+                        from = FROM_RIGHT_BOTTOM;
+                    } else {//右中心
+                        from = FROM_RIGHT;
+                    }
+                } else {//中心区
+                    break;
                 }
 
                 setTouchPoint(x, y, from);
                 break;
             case MotionEvent.ACTION_MOVE:
-                setTouchPoint(event.getX(), event.getY(), from);
+                if (from != FROM_NORMAL) {
+                    setTouchPoint(event.getX(), event.getY(), from);
+                }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
-                backToNormal();
+                if (from != FROM_NORMAL) {
+                    backToNormal();
+                }
                 break;
         }
 
@@ -606,26 +671,52 @@ public class BookPageView extends View {
     private void setTouchPoint(float x, float y, int from) {
         a.x = x;
         a.y = y;
-        if (from == FROM_RIGHT_TOP) {
-            f.x = width;
-            f.y = 0;
-            calculatePoint();
-            if (c.x < 0) {
-                calculateAPoint();
-            }
-        } else if (from == FROM_RIGHT_BOTTOM) {
-            f.x = width;
-            f.y = height;
-            calculatePoint();
-            if (c.x < 0) {
-                calculateAPoint();
-            }
-        } else if (from == FROM_LEFT || from == FROM_RIGHT) {
-            f.x = width;
-            f.y = height;
-            a.y = height - 1;
+        switch (from) {
+            case FROM_RIGHT_TOP:
+                f.x = width;
+                f.y = 0;
+                calculatePoint();
+                if (c.x < 0) {
+                    calculateAPoint();
+                }
+                break;
+            case FROM_RIGHT_BOTTOM:
+                f.x = width;
+                f.y = height;
+                calculatePoint();
+                if (c.x < 0) {
+                    calculateAPoint();
+                }
+                break;
+            case FROM_RIGHT:
+                f.x = width;
+                f.y = height;
+                a.y = height - 1;
+                break;
+            case FROM_LEFT_TOP:
+                f.x = 0;
+                f.y = 0;
+                calculatePoint();
+                if (c.x < 0) {
+                    calculateAPoint();
+                }
+                break;
+            case FROM_LEFT_BOTTOM:
+                f.x = 0;
+                f.y = height;
+                calculatePoint();
+                if (c.x < 0) {
+                    calculateAPoint();
+                }
+                break;
+            case FROM_LEFT:
+                f.x = 0;
+                f.y = height;
+                a.y = height - 1;
+                break;
 
         }
+
         calculatePoint();
         postInvalidate();
     }
@@ -708,15 +799,29 @@ public class BookPageView extends View {
 
     //返回正常状态
     private void backToNormal() {
-        int dx;
-        int dy;
-        if (from == FROM_RIGHT_TOP) {
-            dx = (int) (width - 1 - a.x);
-            dy = (int) (1 - a.y);
-        } else {
-            dx = (int) (width - 1 - a.x);
-            dy = (int) (height - 1 - a.y);
+        int dx = 0;
+        int dy = 0;
+        switch (from) {
+            case FROM_RIGHT_TOP:
+                dx = (int) (width - a.x);
+                dy = (int) (-a.y);
+                break;
+            case FROM_RIGHT_BOTTOM:
+            case FROM_RIGHT:
+                dx = (int) (width - a.x);
+                dy = (int) (height - a.y);
+                break;
+            case FROM_LEFT_TOP:
+                dx = (int) (-a.x);
+                dy = (int) (-a.y);
+                break;
+            case FROM_LEFT_BOTTOM:
+            case FROM_LEFT:
+                dx = (int) (-a.x);
+                dy = (int) (height - a.y);
+                break;
         }
+
         mScroller.startScroll((int) a.x, (int) a.y, dx, dy, 400);
     }
 
@@ -732,6 +837,7 @@ public class BookPageView extends View {
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
                 a.x = a.y = -1;
                 postInvalidate();
+                from = FROM_NORMAL;
             }
         }
     }
