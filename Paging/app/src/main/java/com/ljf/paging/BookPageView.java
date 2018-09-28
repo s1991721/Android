@@ -586,28 +586,28 @@ public class BookPageView extends View {
     //初始化各区域显示内容，在onMeasure后才能获取宽高
     private void initBitmap() {
         bitmapContentA = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        initBitmapA(bitmapContentA, paintAreaA);
+        initBitmapA(paragraphCur);
 
         bitmapContentB = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        initBitmapB(bitmapContentB, paintAreaB);
+        initBitmapB(paragraphNext);
 
         bitmapContentC = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         initBitmapC(bitmapContentC, paintAreaC);
     }
 
     //ABC各自显示的内容
-    private void initBitmapA(Bitmap bitmap, Paint paint) {
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawPath(getPathAreaA(), paint);
-        StaticLayout staticLayout = new StaticLayout("abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789", paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+    private void initBitmapA(String content) {
+        Canvas canvas = new Canvas(bitmapContentA);
+        canvas.drawPath(getPathAreaA(), paintAreaA);
+        StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
     }
 
-    private void initBitmapB(Bitmap bitmap, Paint paint) {
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawPath(getPathAreaA(), paint);
-        StaticLayout staticLayout = new StaticLayout("abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz0123456789", paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+    private void initBitmapB(String content) {
+        Canvas canvas = new Canvas(bitmapContentB);
+        canvas.drawPath(getPathAreaA(), paintAreaB);
+        StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
     }
@@ -640,7 +640,7 @@ public class BookPageView extends View {
                     } else {//左中心
                         from = FROM_LEFT;
                     }
-
+                    initBitmapB(paragraphPre);
                 } else if (x > width * 2 / 3) {//落点在右侧1/3
                     if (y < height / 3) {//右上角
                         from = FROM_RIGHT_TOP;
@@ -649,6 +649,7 @@ public class BookPageView extends View {
                     } else {//右中心
                         from = FROM_RIGHT;
                     }
+                    initBitmapB(paragraphNext);
                 } else {//中心区
                     break;
                 }
