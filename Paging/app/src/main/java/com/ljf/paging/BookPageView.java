@@ -26,6 +26,10 @@ import android.widget.Scroller;
 
 public class BookPageView extends View {
 
+    private String paragraphPre = "ParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPre";
+    private String paragraphCur = "ParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCur";
+    private String paragraphNext = "ParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNext";
+
     private MyPoint a, f, g, e, h, c, j, b, k, d, i;//各点坐标
 
     private Paint paintAreaA;//区域A画笔
@@ -659,7 +663,7 @@ public class BookPageView extends View {
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
                 if (from != FROM_NORMAL) {
-                    backToNormal();
+                    page();
                 }
                 break;
         }
@@ -676,7 +680,7 @@ public class BookPageView extends View {
                 f.x = width;
                 f.y = 0;
                 calculatePoint();
-                if (c.x < 0) {
+                if (c.x < 0 && mScroller.isFinished()) {
                     calculateAPointRight();
                 }
                 break;
@@ -684,7 +688,7 @@ public class BookPageView extends View {
                 f.x = width;
                 f.y = height;
                 calculatePoint();
-                if (c.x < 0) {
+                if (c.x < 0 && mScroller.isFinished()) {
                     calculateAPointRight();
                 }
                 break;
@@ -697,7 +701,7 @@ public class BookPageView extends View {
                 f.x = 0;
                 f.y = 0;
                 calculatePoint();
-                if (c.x > width) {
+                if (c.x > width && mScroller.isFinished()) {
                     calculateAPointLeft();
                 }
                 break;
@@ -705,7 +709,7 @@ public class BookPageView extends View {
                 f.x = 0;
                 f.y = height;
                 calculatePoint();
-                if (c.x > width) {
+                if (c.x > width && mScroller.isFinished()) {
                     calculateAPointLeft();
                 }
                 break;
@@ -714,7 +718,6 @@ public class BookPageView extends View {
                 f.y = height;
                 a.y = height - 1;
                 break;
-
         }
 
         calculatePoint();
@@ -810,6 +813,54 @@ public class BookPageView extends View {
         a.y = Math.abs(f.y - h2);
     }
 
+    //手势离开时判断翻页还是恢复
+    private void page() {
+        switch (from) {
+            case FROM_RIGHT:
+            case FROM_RIGHT_TOP:
+            case FROM_RIGHT_BOTTOM:
+                if (a.x < width / 2) {
+                    nextPage();
+                } else {
+                    backToNormal();
+                }
+                break;
+            case FROM_LEFT:
+            case FROM_LEFT_TOP:
+            case FROM_LEFT_BOTTOM:
+                if (a.x > width / 2) {
+                    prePage();
+                } else {
+                    backToNormal();
+                }
+                break;
+        }
+    }
+
+    //下一页
+    private void nextPage() {
+        int dx = -(width + (int) (a.x));
+        int dy;
+        if (from == FROM_RIGHT_TOP) {
+            dy = (int) (-a.y);
+        } else {
+            dy = (int) (height - a.y);
+        }
+        mScroller.startScroll((int) a.x, (int) a.y, dx, dy, 1000);
+    }
+
+    //上一页
+    private void prePage() {
+        int dx = (2 * width - (int) (a.x));
+        int dy;
+        if (from == FROM_LEFT_TOP) {
+            dy = (int) (-a.y);
+        } else {
+            dy = (int) (height - a.y);
+        }
+        mScroller.startScroll((int) a.x, (int) a.y, dx, dy, 1000);
+    }
+
     //返回正常状态
     private void backToNormal() {
         int dx = 0;
@@ -845,12 +896,12 @@ public class BookPageView extends View {
             float x = mScroller.getCurrX();
             float y = mScroller.getCurrY();
 
-            setTouchPoint(x, y, from);
-
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
-                a.x = a.y = -1;
-                postInvalidate();
-                from = FROM_NORMAL;
+//                a.x = a.y = -1;
+//                postInvalidate();
+//                from = FROM_NORMAL;
+            } else {
+                setTouchPoint(x, y, from);
             }
         }
     }
@@ -865,6 +916,14 @@ public class BookPageView extends View {
         MyPoint(float x, float y) {
             this.x = x;
             this.y = y;
+        }
+
+        @Override
+        public String toString() {
+            return "MyPoint{" +
+                    "x=" + x +
+                    ", y=" + y +
+                    '}';
         }
     }
 
