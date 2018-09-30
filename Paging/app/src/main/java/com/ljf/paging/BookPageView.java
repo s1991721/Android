@@ -14,6 +14,7 @@ import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
@@ -26,9 +27,18 @@ import android.widget.Scroller;
 
 public class BookPageView extends View {
 
-    private String paragraphPre = "ParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPreParagraphPre";
-    private String paragraphCur = "ParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCurParagraphCur";
-    private String paragraphNext = "ParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNextParagraphNext";
+    private int curNum = 0;
+    private String[] paragraphs = new String[]{
+            "11111111111111111111111111111111111111",
+            "22222222222222222222222222222222222222",
+            "33333333333333333333333333333333333333",
+            "44444444444444444444444444444444444444",
+            "55555555555555555555555555555555555555",
+            "66666666666666666666666666666666666666",
+            "77777777777777777777777777777777777777",
+            "88888888888888888888888888888888888888",
+            "99999999999999999999999999999999999999",
+            "00000000000000000000000000000000000000"};
 
     private MyPoint a, f, g, e, h, c, j, b, k, d, i;//各点坐标
 
@@ -117,7 +127,7 @@ public class BookPageView extends View {
         paintAreaC.setAntiAlias(true);
 
         paintAreaB = new Paint();
-        paintAreaB.setColor(Color.BLUE);
+        paintAreaB.setColor(Color.GREEN);
         paintAreaB.setAntiAlias(true);
 
         paintText = new TextPaint();
@@ -201,7 +211,7 @@ public class BookPageView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-
+//        Log.i("ljf", paragraphs[curNum]);
         canvas.drawColor(Color.YELLOW);
 
         if (from == FROM_NORMAL) {//未翻页状态
@@ -585,11 +595,11 @@ public class BookPageView extends View {
 
     //初始化各区域显示内容，在onMeasure后才能获取宽高
     private void initBitmap() {
-        bitmapContentA = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        initBitmapA(paragraphCur);
 
-        bitmapContentB = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        initBitmapB(paragraphNext);
+        initBitmapA(paragraphs[curNum]);
+
+
+        initBitmapB(paragraphs[curNum + 1]);
 
         bitmapContentC = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         initBitmapC(bitmapContentC, paintAreaC);
@@ -597,6 +607,7 @@ public class BookPageView extends View {
 
     //ABC各自显示的内容
     private void initBitmapA(String content) {
+        bitmapContentA = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapContentA);
         canvas.drawPath(getPathAreaA(), paintAreaA);
         StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
@@ -605,6 +616,7 @@ public class BookPageView extends View {
     }
 
     private void initBitmapB(String content) {
+        bitmapContentB = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapContentB);
         canvas.drawPath(getPathAreaA(), paintAreaB);
         StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
@@ -627,12 +639,18 @@ public class BookPageView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                Log.i("ljf", "ACTION_DOWN" + "----from=" + from);
                 float x = event.getX();
                 float y = event.getY();
 
                 if (x < width / 3) {//落点在左侧1/3
+                    if (curNum == 0) {//第一页不许前翻
+                        //todo 回调第一页
+                        break;
+                    }
                     if (y < height / 3) {//左上角
                         from = FROM_LEFT_TOP;
                     } else if (y > height * 2 / 3) {//左下角
@@ -640,7 +658,7 @@ public class BookPageView extends View {
                     } else {//左中心
                         from = FROM_LEFT;
                     }
-                    initBitmapB(paragraphPre);
+                    initBitmapB(paragraphs[curNum - 1]);
                 } else if (x > width * 2 / 3) {//落点在右侧1/3
                     if (y < height / 3) {//右上角
                         from = FROM_RIGHT_TOP;
@@ -649,7 +667,7 @@ public class BookPageView extends View {
                     } else {//右中心
                         from = FROM_RIGHT;
                     }
-                    initBitmapB(paragraphNext);
+                    initBitmapB(paragraphs[curNum + 1]);
                 } else {//中心区
                     break;
                 }
@@ -657,12 +675,14 @@ public class BookPageView extends View {
                 setTouchPoint(x, y, from);
                 break;
             case MotionEvent.ACTION_MOVE:
+                Log.i("ljf", "ACTION_MOVE" + "----from=" + from);
                 if (from != FROM_NORMAL) {
                     setTouchPoint(event.getX(), event.getY(), from);
                 }
                 break;
             case MotionEvent.ACTION_UP:
             case MotionEvent.ACTION_CANCEL:
+                Log.i("ljf", "ACTION_CANCEL" + "----from=" + from);
                 if (from != FROM_NORMAL) {
                     page();
                 }
@@ -838,6 +858,13 @@ public class BookPageView extends View {
         }
     }
 
+    private final int PAGING_STATE_NONE = 0;
+    private final int PAGING_STATE_NEXT = 1;
+    private final int PAGING_STATE_PRE = 2;
+    private final int PAGING_STATE_NORMAL = 3;
+
+    private int pagingState = PAGING_STATE_NONE;
+
     //下一页
     private void nextPage() {
         int dx = -(width + (int) (a.x));
@@ -847,6 +874,7 @@ public class BookPageView extends View {
         } else {
             dy = (int) (height - a.y);
         }
+        pagingState = PAGING_STATE_NEXT;
         mScroller.startScroll((int) a.x, (int) a.y, dx, dy, 1000);
     }
 
@@ -859,6 +887,7 @@ public class BookPageView extends View {
         } else {
             dy = (int) (height - a.y);
         }
+        pagingState = PAGING_STATE_PRE;
         mScroller.startScroll((int) a.x, (int) a.y, dx, dy, 1000);
     }
 
@@ -886,7 +915,7 @@ public class BookPageView extends View {
                 dy = (int) (height - a.y);
                 break;
         }
-
+        pagingState = PAGING_STATE_NORMAL;
         mScroller.startScroll((int) a.x, (int) a.y, dx, dy, 400);
     }
 
@@ -898,13 +927,30 @@ public class BookPageView extends View {
             float y = mScroller.getCurrY();
 
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
-//                a.x = a.y = -1;
-//                postInvalidate();
-//                from = FROM_NORMAL;
+                if (pagingState == PAGING_STATE_NORMAL) {
+                    from = FROM_NORMAL;
+                } else {
+                    changeContent();
+                }
             } else {
                 setTouchPoint(x, y, from);
             }
         }
+    }
+
+    //翻页后数据变化
+    private void changeContent() {
+        switch (pagingState) {
+            case PAGING_STATE_NEXT:
+                curNum++;
+                break;
+            case PAGING_STATE_PRE:
+                curNum--;
+                break;
+        }
+        initBitmapA(paragraphs[curNum]);
+        pagingState = PAGING_STATE_NONE;
+        from = FROM_NORMAL;
     }
 
     //anroid.graphics.Point的x、y为整型
