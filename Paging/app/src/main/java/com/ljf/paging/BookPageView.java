@@ -9,6 +9,7 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.GradientDrawable;
 import android.text.Layout;
 import android.text.StaticLayout;
@@ -164,45 +165,45 @@ public class BookPageView extends View {
 
     //初始化阴影
     private void initGradient() {
-        int deepColor = 0x33333333;
+        int deepColor = 0x55333333;
         int lightColor = 0x01333333;
         int[] gradientColors = new int[]{lightColor, deepColor};
 
         gradientDrawableATopLeft = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         gradientDrawableATopLeft.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        gradientDrawableABottomLeft = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+        gradientDrawableABottomLeft = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
         gradientDrawableABottomLeft.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        deepColor = 0x22333333;
+        deepColor = 0x55333333;
         lightColor = 0x01333333;
-        gradientColors = new int[]{lightColor, deepColor};
-        gradientDrawableATopRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+        gradientColors = new int[]{lightColor, lightColor, lightColor, deepColor};
+        gradientDrawableATopRight = new GradientDrawable(GradientDrawable.Orientation.TOP_BOTTOM, gradientColors);
         gradientDrawableATopRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        gradientDrawableABottomRight = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+        gradientDrawableABottomRight = new GradientDrawable(GradientDrawable.Orientation.BOTTOM_TOP, gradientColors);
         gradientDrawableABottomRight.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        deepColor = 0x44333333;
+        deepColor = 0x55333333;
         lightColor = 0x01333333;
         gradientColors = new int[]{lightColor, deepColor};
         gradientDrawableAHorizontal = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         gradientDrawableAHorizontal.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        deepColor = 0x05111111;
-        lightColor = 0x00111111;
-        gradientColors = new int[]{lightColor, deepColor};
+        deepColor = 0x55333333;
+        lightColor = 0x01111111;
+        gradientColors = new int[]{deepColor, lightColor};
         gradientDrawableBTop = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         gradientDrawableBTop.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        gradientDrawableBBottom = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+        gradientDrawableBBottom = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
         gradientDrawableBBottom.setGradientType(GradientDrawable.LINEAR_GRADIENT);
 
-        deepColor = 0x05333333;
+        deepColor = 0x22333333;
         lightColor = 0x00333333;
         gradientColors = new int[]{lightColor, deepColor};
         gradientDrawableCTop = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
         gradientDrawableCTop.setGradientType(GradientDrawable.LINEAR_GRADIENT);
-        gradientDrawableCBottom = new GradientDrawable(GradientDrawable.Orientation.LEFT_RIGHT, gradientColors);
+        gradientDrawableCBottom = new GradientDrawable(GradientDrawable.Orientation.RIGHT_LEFT, gradientColors);
         gradientDrawableCBottom.setGradientType(GradientDrawable.LINEAR_GRADIENT);
     }
 
@@ -589,13 +590,14 @@ public class BookPageView extends View {
         return result;
     }
 
+    private Bitmap bitmapBg;
     private Bitmap bitmapContentA;
     private Bitmap bitmapContentB;
     private Bitmap bitmapContentC;
 
     //初始化各区域显示内容，在onMeasure后才能获取宽高
     private void initBitmap() {
-
+        bitmapBg = ((BitmapDrawable) getResources().getDrawable(R.mipmap.bg_pager)).getBitmap();
         initBitmapA(paragraphs[curNum]);
 
 
@@ -607,18 +609,21 @@ public class BookPageView extends View {
 
     //ABC各自显示的内容
     private void initBitmapA(String content) {
-        bitmapContentA = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+
+        bitmapContentA = Bitmap.createScaledBitmap(bitmapBg, width, height, true);
+//        bitmapContentA = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapContentA);
-        canvas.drawPath(getPathAreaA(), paintAreaA);
+//        canvas.drawPath(getPathAreaA(), paintAreaA);
         StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
     }
 
     private void initBitmapB(String content) {
-        bitmapContentB = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
+        bitmapContentB = Bitmap.createScaledBitmap(bitmapBg, width, height, true);
+//        bitmapContentB = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapContentB);
-        canvas.drawPath(getPathAreaA(), paintAreaB);
+//        canvas.drawPath(getPathAreaA(), paintAreaB);
         StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
