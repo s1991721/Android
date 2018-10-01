@@ -927,6 +927,7 @@ public class BookPageView extends View {
             float y = mScroller.getCurrY();
 
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
+                mScroller.forceFinished(true);
                 if (pagingState == PAGING_STATE_NORMAL) {
                     from = FROM_NORMAL;
                 } else {
