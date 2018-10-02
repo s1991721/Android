@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Matrix;
-import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Region;
 import android.graphics.drawable.BitmapDrawable;
@@ -28,24 +27,11 @@ import android.widget.Scroller;
 
 public class BookPageView extends View {
 
-    private int curNum = 0;
-    private String[] paragraphs = new String[]{
-            "11111111111111111111111111111111111111",
-            "22222222222222222222222222222222222222",
-            "33333333333333333333333333333333333333",
-            "44444444444444444444444444444444444444",
-            "55555555555555555555555555555555555555",
-            "66666666666666666666666666666666666666",
-            "77777777777777777777777777777777777777",
-            "88888888888888888888888888888888888888",
-            "99999999999999999999999999999999999999",
-            "00000000000000000000000000000000000000"};
+    //todo 当前页
+    private int curPageNum = 1;
 
     private MyPoint a, f, g, e, h, c, j, b, k, d, i;//各点坐标
 
-    private Paint paintAreaA;//区域A画笔
-    private Paint paintAreaC;//区域C画笔
-    private Paint paintAreaB;//区域B画笔
     private TextPaint paintText;//文字画笔
 
     private Path pathA;//区域A路径
@@ -119,18 +105,6 @@ public class BookPageView extends View {
 
     //初始化画笔
     private void initPaint() {
-        paintAreaA = new Paint();
-        paintAreaA.setColor(Color.GREEN);
-        paintAreaA.setAntiAlias(true);
-
-        paintAreaC = new Paint();
-        paintAreaC.setColor(Color.YELLOW);
-        paintAreaC.setAntiAlias(true);
-
-        paintAreaB = new Paint();
-        paintAreaB.setColor(Color.GREEN);
-        paintAreaB.setAntiAlias(true);
-
         paintText = new TextPaint();
         paintText.setColor(Color.BLACK);
         paintText.setAntiAlias(true);
@@ -212,8 +186,8 @@ public class BookPageView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-//        Log.i("ljf", paragraphs[curNum]);
-        canvas.drawColor(Color.YELLOW);
+
+        canvas.drawBitmap(bitmapContentC, 0, 0, null);
 
         if (from == FROM_NORMAL) {//未翻页状态
             drawPathAContent(canvas, getPathAreaA());
@@ -598,13 +572,12 @@ public class BookPageView extends View {
     //初始化各区域显示内容，在onMeasure后才能获取宽高
     private void initBitmap() {
         bitmapBg = ((BitmapDrawable) getResources().getDrawable(R.mipmap.bg_pager)).getBitmap();
-        initBitmapA(paragraphs[curNum]);
 
+        initBitmapA(getPageContent(curPageNum));
 
-        initBitmapB(paragraphs[curNum + 1]);
+        initBitmapB(getPageContent(curPageNum + 1));
 
-        bitmapContentC = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
-        initBitmapC(bitmapContentC, paintAreaC);
+        bitmapContentC = Bitmap.createScaledBitmap(bitmapBg, width, height, true);
     }
 
     //ABC各自显示的内容
@@ -614,7 +587,7 @@ public class BookPageView extends View {
 //        bitmapContentA = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapContentA);
 //        canvas.drawPath(getPathAreaA(), paintAreaA);
-        StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+        StaticLayout staticLayout = new StaticLayout(content, paintText, width, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
     }
@@ -624,15 +597,7 @@ public class BookPageView extends View {
 //        bitmapContentB = Bitmap.createBitmap(width, height, Bitmap.Config.RGB_565);
         Canvas canvas = new Canvas(bitmapContentB);
 //        canvas.drawPath(getPathAreaA(), paintAreaB);
-        StaticLayout staticLayout = new StaticLayout(content, paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
-        canvas.translate(20, 20);
-        staticLayout.draw(canvas);
-    }
-
-    private void initBitmapC(Bitmap bitmap, Paint paint) {
-        Canvas canvas = new Canvas(bitmap);
-        canvas.drawPath(getPathAreaA(), paint);
-        StaticLayout staticLayout = new StaticLayout("", paintText, width - 40, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
+        StaticLayout staticLayout = new StaticLayout(content, paintText, width, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
         canvas.translate(20, 20);
         staticLayout.draw(canvas);
     }
@@ -652,7 +617,7 @@ public class BookPageView extends View {
                 float y = event.getY();
 
                 if (x < width / 3) {//落点在左侧1/3
-                    if (curNum == 0) {//第一页不许前翻
+                    if (curPageNum == 1) {//第一页不许前翻
                         //todo 回调第一页
                         break;
                     }
@@ -663,7 +628,7 @@ public class BookPageView extends View {
                     } else {//左中心
                         from = FROM_LEFT;
                     }
-                    initBitmapB(paragraphs[curNum - 1]);
+                    initBitmapB(getPageContent(curPageNum - 1));
                 } else if (x > width * 2 / 3) {//落点在右侧1/3
                     if (y < height / 3) {//右上角
                         from = FROM_RIGHT_TOP;
@@ -672,7 +637,7 @@ public class BookPageView extends View {
                     } else {//右中心
                         from = FROM_RIGHT;
                     }
-                    initBitmapB(paragraphs[curNum + 1]);
+                    initBitmapB(getPageContent(curPageNum + 1));
                 } else {//中心区
                     break;
                 }
@@ -948,15 +913,19 @@ public class BookPageView extends View {
     private void changeContent() {
         switch (pagingState) {
             case PAGING_STATE_NEXT:
-                curNum++;
+                curPageNum++;
                 break;
             case PAGING_STATE_PRE:
-                curNum--;
+                curPageNum--;
                 break;
         }
-        initBitmapA(paragraphs[curNum]);
+        initBitmapA(getPageContent(curPageNum));
         pagingState = PAGING_STATE_NONE;
         from = FROM_NORMAL;
+    }
+
+    private String getPageContent(int pageNum) {
+        return mContentController.getContent(pageNum);
     }
 
     //anroid.graphics.Point的x、y为整型
@@ -978,6 +947,14 @@ public class BookPageView extends View {
                     ", y=" + y +
                     '}';
         }
+    }
+
+    //******************************内容******************************
+
+    private ContentController mContentController;
+
+    public void setContentController(ContentController contentController) {
+        mContentController = contentController;
     }
 
 }
