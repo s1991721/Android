@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.ljf.paging.BookPageView
-        android:id="@+id/pageView"
+    <com.ljf.paging.BookPageContainer
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
