@@ -32,8 +32,9 @@ import java.io.InputStreamReader;
 
 public class BookPageView extends View {
 
-    //todo 当前页
+    //当前页
     private int curPageNum = 1;
+    private int textSize = 60;
 
     private MyPoint a, f, g, e, h, c, j, b, k, d, i;//各点坐标
 
@@ -113,7 +114,7 @@ public class BookPageView extends View {
         paintText = new TextPaint();
         paintText.setColor(Color.BLACK);
         paintText.setAntiAlias(true);
-        paintText.setTextSize(60);
+        paintText.setTextSize(textSize);
     }
 
     //初始化路径
@@ -593,7 +594,7 @@ public class BookPageView extends View {
         Canvas canvas = new Canvas(bitmapContentA);
 //        canvas.drawPath(getPathAreaA(), paintAreaA);
         StaticLayout staticLayout = new StaticLayout(content, paintText, width, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
-        canvas.translate(20, 20);
+        canvas.translate(20, 0);
         staticLayout.draw(canvas);
     }
 
@@ -603,7 +604,7 @@ public class BookPageView extends View {
         Canvas canvas = new Canvas(bitmapContentB);
 //        canvas.drawPath(getPathAreaA(), paintAreaB);
         StaticLayout staticLayout = new StaticLayout(content, paintText, width, Layout.Alignment.ALIGN_NORMAL, 1, 0, true);
-        canvas.translate(20, 20);
+        canvas.translate(20, 0);
         staticLayout.draw(canvas);
     }
 
@@ -623,7 +624,9 @@ public class BookPageView extends View {
 
                 if (x < width / 3) {//落点在左侧1/3
                     if (curPageNum == 1) {//第一页不许前翻
-                        //todo 回调第一页
+                        if (onPagingListener != null) {
+                            onPagingListener.noMore(false);
+                        }
                         break;
                     }
                     if (y < height / 3) {//左上角
@@ -961,7 +964,6 @@ public class BookPageView extends View {
 
     private ContentController mContentController = new ContentController(getContext());
 
-
     class ContentController {
 
         private Context mContext;
@@ -980,7 +982,7 @@ public class BookPageView extends View {
          * @param curPage 实际页数
          * @return 页内容
          */
-        public String getContent(int curPage) {//起始页数为1
+        private String getContent(int curPage) {//起始页数为1
             if (curPage < 1) {
                 return "";
             }
@@ -1006,7 +1008,9 @@ public class BookPageView extends View {
                 content = getContent(startPage, endPage);
             } catch (Exception e) {
                 e.printStackTrace();
-                //todo 获取内容失败
+                if (onPagingListener != null) {
+                    onPagingListener.onContentErro(e.getMessage());
+                }
             }
 
         }
@@ -1028,8 +1032,9 @@ public class BookPageView extends View {
             BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
             int pageNum = 1;//当前页码，每次加载都是从txt第一行读取
 
-            int countMax = 432;//每页最大字数，width*height/（size*size）
-            int numOfRow = 18;//一行字数，width/size
+            int countMax = (width / textSize) * (height / textSize - 3) / 10;//每页最大字数，width*height/（size*size）,去个位
+            countMax = countMax * 10;
+            int numOfRow = width / textSize;//一行字数，width/size
             String readLine = "";//读取的行内容，或上次截剩的内容
             for (int i = startPage; i <= endPage; i++) {
 
@@ -1101,8 +1106,7 @@ public class BookPageView extends View {
 
     }
 
-
-    //******************************回调******************************
+    //******************************回调及设置参数******************************
 
     private OnCenterClickListener onCenterClickListener;
 
@@ -1113,5 +1117,29 @@ public class BookPageView extends View {
 
     public void setOnCenterClickListener(OnCenterClickListener onCenterClickListener) {
         this.onCenterClickListener = onCenterClickListener;
+    }
+
+    private OnPagingListener onPagingListener;
+
+    interface OnPagingListener {
+        void noMore(boolean next);//没有前页or后页
+
+        void onPageChange(int pageNum);//翻页
+
+        void onContentErro(String msg);//获取内容失败
+    }
+
+    public void setOnPagingListener(OnPagingListener onPagingListener) {
+        this.onPagingListener = onPagingListener;
+    }
+
+    //打开之前设置
+    public void setCurPageNum(int pageNum) {
+        curPageNum = pageNum;
+    }
+
+    //设置字体大小，影响显示及内容数量
+    public void setTextSize(int textSize) {
+        this.textSize = textSize;
     }
 }
