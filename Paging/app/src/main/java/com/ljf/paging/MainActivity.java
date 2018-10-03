@@ -17,7 +17,6 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         pageView = findViewById(R.id.pageView);
-        ContentController contentController = new ContentController(this, pageView);
     }
 
 
