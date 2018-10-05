@@ -8,6 +8,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 /**
  * Created by mr.lin on 2018/10/3.
@@ -19,6 +21,7 @@ public class BookPageContainer extends ViewGroup {//继承ViewGroup,代码布局
     private ViewGroup topToolVg;
     private BookPageView bookPager;
     private ViewGroup bottomToolVg;
+    private TextView pageNumTv;
 
     private int width, height;
 
@@ -51,13 +54,31 @@ public class BookPageContainer extends ViewGroup {//继承ViewGroup,代码布局
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
-        topToolVg = findViewById(R.id.topToolVg);
         bookPager = findViewById(R.id.pageView);
+        pageNumTv = findViewById(R.id.pageNumTv);
+        topToolVg = findViewById(R.id.topToolVg);
         bottomToolVg = findViewById(R.id.bottomToolVg);
         bookPager.setOnCenterClickListener(new BookPageView.OnCenterClickListener() {
             @Override
             public void onCenterClick(BookPageView bookPageView) {
                 executeAnimation();
+            }
+        });
+        bookPager.setOnPagingListener(new BookPageView.OnPagingListener() {
+            @Override
+            public void noMore(boolean next) {
+                Toast.makeText(getContext(), "没有内容了！", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onPageChange(int pageNum) {
+
+                pageNumTv.setText(String.format("第%d页", pageNum));
+            }
+
+            @Override
+            public void onContentErro(String msg) {
+                Toast.makeText(getContext(), msg, Toast.LENGTH_LONG).show();
             }
         });
     }
@@ -67,6 +88,7 @@ public class BookPageContainer extends ViewGroup {//继承ViewGroup,代码布局
         width = MeasureSpec.getSize(widthMeasureSpec);
         height = MeasureSpec.getSize(heightMeasureSpec);
         bookPager.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
+        pageNumTv.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
         topToolVg.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));//注意AT_MOST与xml间底对应
         bottomToolVg.measure(MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.AT_MOST));
         setMeasuredDimension(width, height);
@@ -86,6 +108,8 @@ public class BookPageContainer extends ViewGroup {//继承ViewGroup,代码布局
 
         topToolVg.layout(0, topToolVgY, width, topToolVgY + topToolVgHeight);//注意bottom的计算，不要只关注top变化，否则控件会被拉伸
         bottomToolVg.layout(0, bottomToolVgY, width, bottomToolVgY + bottomToolVgHeight);
+
+        pageNumTv.layout(0, height - pageNumTv.getMeasuredHeight(), pageNumTv.getMeasuredWidth(), height);
     }
 
     //显示or隐藏工具栏

@@ -8,6 +8,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
+    <TextView
+        android:id="@+id/pageNumTv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center" />
+
     <LinearLayout
         android:id="@+id/topToolVg"
         android:layout_width="match_parent"
@@ -20,7 +26,6 @@
             android:gravity="center"
             android:text="顶部工具栏" />
     </LinearLayout>
-
 
     <LinearLayout
         android:id="@+id/bottomToolVg"

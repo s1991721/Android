@@ -584,6 +584,9 @@ public class BookPageView extends View {
         initBitmapB(getPageContent(curPageNum + 1));
 
         bitmapContentC = Bitmap.createScaledBitmap(bitmapBg, width, height, true);
+        if (onPagingListener != null) {
+            onPagingListener.onPageChange(curPageNum);
+        }
     }
 
     //ABC各自显示的内容
@@ -933,6 +936,9 @@ public class BookPageView extends View {
         initBitmapA(getPageContent(curPageNum));
         pagingState = PAGING_STATE_NONE;
         from = FROM_NORMAL;
+        if (onPagingListener != null) {
+            onPagingListener.onPageChange(curPageNum);
+        }
     }
 
     private String getPageContent(int pageNum) {
