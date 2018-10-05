@@ -911,7 +911,8 @@ public class BookPageView extends View {
             float y = mScroller.getCurrY();
 
             if (mScroller.getFinalX() == x && mScroller.getFinalY() == y) {
-                mScroller.forceFinished(true);
+                mScroller.forceFinished(true);//必需设置停止，否则下次翻页必定不响应，
+                // 因为909行return true，进入后getFinalX() == x，getFinalY() == y又变回了PAGING_STATE_NORMAL，此次的事件便被忽略掉了
                 if (pagingState == PAGING_STATE_NORMAL) {
                     from = FROM_NORMAL;
                 } else {
@@ -970,7 +971,7 @@ public class BookPageView extends View {
 
     private ContentController mContentController = new ContentController(getContext());
 
-    class ContentController {
+    private class ContentController {
 
         private Context mContext;
         private static final int CACHE_PAGE = 50;//txt预计一行约500个汉字，共1000字节约1k。缓存50行约50k
@@ -980,7 +981,7 @@ public class BookPageView extends View {
 
         private String[] content = new String[CACHE_PAGE];
 
-        public ContentController(Context mContext) {
+        private ContentController(Context mContext) {
             this.mContext = mContext;
         }
 
