@@ -3,6 +3,9 @@
 */app/proguard-rules.pro
 */app/src/androidTest/*
 */app/src/test/*
+*/app/build/*
+*/app/*.iml
+*/.gradle
 */gradle.properties
 */gradle/wrapper/gradle-wrapper.jar
 */gradle/wrapper/gradle-wrapper.properties
