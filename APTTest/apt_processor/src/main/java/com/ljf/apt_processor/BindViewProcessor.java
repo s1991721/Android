@@ -17,6 +17,8 @@ import javax.annotation.processing.Messager;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.Processor;
 import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
@@ -29,6 +31,8 @@ import javax.tools.JavaFileObject;
  * Created by mr.lin on 2019/3/6
  */
 @AutoService(Processor.class)
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+@SupportedAnnotationTypes({"com.ljf.apt_annotation.BindView"})
 public class BindViewProcessor extends AbstractProcessor {
 
     private Messager mMessager;
